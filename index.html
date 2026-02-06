@@ -1,258 +1,814 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz • Matemática (Produto Notável)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz • Matemática (Produto Notável)</title>
 
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <!-- ApexCharts -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
 
-:root{
-  --primary:#845ef7;
-  --secondary:#ffd43b;
-  --bg:#0b1230;
-  --card:#0e1a3f;
-  --text:#eaf0ff;
-  --muted:rgba(234,240,255,.75);
-  --line:rgba(255,255,255,.12);
-}
+    :root{
+      --primary:#845ef7;
+      --secondary:#ffd43b;
 
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Montserrat, Arial, sans-serif;
-  background:linear-gradient(180deg,#070b1a,#0b1230);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-}
+      --bg0:#070b1a;
+      --bg1:#0b1230;
+      --card:#0e1a3f;
+      --card2:#0b1536;
 
-.container{
-  width:100%;
-  max-width:900px;
-  background:var(--card);
-  border-radius:22px;
-  border:1px solid var(--line);
-  overflow:hidden;
-}
+      --text:#eaf0ff;
+      --muted:rgba(234,240,255,.72);
+      --line:rgba(255,255,255,.10);
 
-.header{
-  padding:18px 22px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+      --shadow:0 18px 60px rgba(0,0,0,.45);
+      --radius:22px;
+    }
 
-.header h1{
-  margin:0;
-  font-size:16px;
-  font-weight:800;
-}
+    body.light{
+      --bg0:#eef2ff;
+      --bg1:#f8f9ff;
+      --card:#ffffff;
+      --card2:#fbfbff;
 
-.counter{
-  font-weight:800;
-  color:var(--secondary);
-}
+      --text:#14162b;
+      --muted:rgba(20,22,43,.70);
+      --line:rgba(20,22,43,.12);
 
-.progress{
-  height:8px;
-  background:rgba(255,255,255,.1);
-}
-.progress div{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,var(--primary),var(--secondary));
-  transition:.3s;
-}
+      --shadow:0 18px 60px rgba(20,22,43,.10);
+    }
 
-.content{
-  padding:24px;
-}
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:Montserrat, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(132,94,247,.35), transparent 60%),
+        radial-gradient(900px 500px at 85% 15%, rgba(255,212,59,.22), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
 
-.question{
-  font-size:18px;
-  font-weight:800;
-  margin-bottom:16px;
-}
+    .themeBtn{
+      position: fixed;
+      top:16px; right:18px;
+      z-index: 10;
+      width:44px; height:44px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor:pointer;
+      font-size:18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      user-select:none;
+    }
+    body.light .themeBtn{
+      background: rgba(255,255,255,.75);
+      box-shadow: 0 10px 30px rgba(20,22,43,.12);
+    }
 
-.options{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
+    .wrap{ width:min(980px, 100%); }
 
-.option{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:14px;
-  border-radius:16px;
-  border:1px solid var(--line);
-  cursor:pointer;
-  transition:.2s;
-}
-.option:hover{
-  background:rgba(132,94,247,.12);
-}
-.option.selected{
-  background:rgba(255,212,59,.15);
-  border-color:var(--secondary);
-}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
 
-.letter{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  background:rgba(255,212,59,.2);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-weight:900;
-  color:var(--secondary);
-}
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:18px 22px;
+      border-bottom:1px solid var(--line);
+      background: rgba(0,0,0,.08);
+    }
+    body.light .topbar{ background: rgba(255,255,255,.60); }
 
-.actions{
-  display:flex;
-  justify-content:space-between;
-  margin-top:20px;
-}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 0;
+    }
+    .logo{
+      width:34px; height:34px;
+      border-radius:12px;
+      background: conic-gradient(from 210deg, var(--primary), var(--secondary));
+      box-shadow: 0 8px 18px rgba(132,94,247,.25);
+      flex:0 0 auto;
+    }
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+      min-width:0;
+    }
+    .title h1{
+      margin:0;
+      font-size:16px;
+      font-weight:800;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .subtitle{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:600;
+    }
 
-button{
-  border:none;
-  padding:12px 18px;
-  border-radius:14px;
-  font-weight:800;
-  cursor:pointer;
-}
+    .meta{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      color:var(--muted);
+      font-weight:800;
+      font-size:13px;
+      white-space:nowrap;
+    }
+    .meta strong{ color:var(--secondary); }
 
-.btn-back{
-  background:rgba(255,255,255,.1);
-  color:var(--text);
-}
+    .progress-wrap{
+      padding:14px 22px 18px 22px;
+      border-bottom:1px solid var(--line);
+    }
+    .progress-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+      color:var(--muted);
+      font-weight:800;
+      font-size:13px;
+    }
+    .progressbar{
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      border:1px solid var(--line);
+      overflow:hidden;
+    }
+    body.light .progressbar{ background: rgba(20,22,43,.06); }
+    .progressbar > div{
+      width:0%;
+      height:100%;
+      border-radius:999px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width .35s ease;
+    }
 
-.btn-confirm{
-  background:linear-gradient(180deg,var(--primary),#6f4df0);
-  color:#fff;
-}
+    .card-inner{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      padding:26px;
+    }
 
-.alert{
-  background:rgba(255,212,59,.18);
-  color:var(--secondary);
-  padding:10px;
-  border-radius:14px;
-  font-weight:800;
-  margin-bottom:12px;
-  text-align:center;
-}
+    /* Intro */
+    .section-title{
+      font-size:22px;
+      font-weight:800;
+      margin:6px 0 6px 0;
+    }
+    .section-text{
+      margin:0 0 18px 0;
+      color:var(--muted);
+      font-weight:600;
+      font-size:13px;
+      line-height:1.45;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr 1fr 0.9fr;
+      gap:14px;
+      margin: 14px 0 18px;
+    }
+    @media (max-width:860px){
+      .grid{ grid-template-columns:1fr; }
+    }
+    .field label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+      margin:0 0 8px 4px;
+    }
+    .field input{
+      width:100%;
+      height:48px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 0 14px;
+      outline:none;
+      font-weight:800;
+    }
+    body.light .field input{ background: rgba(20,22,43,.03); }
+    .field input:focus{
+      border-color: rgba(255,212,59,.65);
+      box-shadow: 0 0 0 3px rgba(255,212,59,.12);
+    }
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:8px;
+      align-items:center;
+      justify-content:flex-start;
+    }
+    .chip{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-weight:800;
+      font-size:12px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      user-select:none;
+    }
+    .chip .dot{
+      width:8px; height:8px; border-radius:50%;
+      background: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(255,212,59,.12);
+    }
 
-.result{
-  text-align:center;
-}
+    /* Quiz */
+    .qhead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top: 2px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-weight:800;
+      font-size:13px;
+    }
+    .qtext{
+      font-size:20px;
+      font-weight:900;
+      margin: 8px 0 16px 0;
+      color: var(--text);
+      line-height:1.25;
+    }
+    .choices{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin: 10px 0 12px;
+    }
+    .choice{
+      width:100%;
+      text-align:left;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      border-radius:16px;
+      padding:14px 14px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:800;
+      line-height:1.25;
+      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+    }
+    body.light .choice{ background: rgba(20,22,43,.03); }
+    .choice:hover{
+      border-color: rgba(132,94,247,.65);
+      background: rgba(132,94,247,.10);
+    }
+    .choice.selected{
+      border-color: rgba(255,212,59,.85);
+      background: rgba(255,212,59,.12);
+    }
+    .letter{
+      width:34px; height:34px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      background: rgba(255,212,59,.16);
+      border:1px solid rgba(255,212,59,.35);
+      color: var(--secondary);
+      flex:0 0 auto;
+    }
+    .hint{
+      color: var(--muted);
+      font-weight:700;
+      font-size:14px;
+      margin: 6px 0 0;
+    }
 
-.result h2{
-  margin-top:0;
-}
+    .actions{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:12px;
+      margin-top: 16px;
+    }
+    .btn{
+      border:none;
+      height:44px;
+      padding:0 16px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:900;
+      letter-spacing:.2px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      transition: transform .08s ease, filter .15s ease;
+      user-select:none;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn-ghost{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.16);
+      color: var(--text);
+    }
+    body.light .btn-ghost{
+      background: rgba(20,22,43,.04);
+      border-color: rgba(20,22,43,.10);
+      color: var(--text);
+    }
+    .btn-confirm{
+      background: linear-gradient(180deg, var(--primary), #6f4df0);
+      color:white;
+      box-shadow: 0 14px 30px rgba(132,94,247,.22);
+    }
+    .btn-confirm:hover{ filter: brightness(1.06); }
+    .btn[disabled]{
+      opacity:.55;
+      cursor:not-allowed;
+      filter:saturate(.4);
+    }
 
-#chart{
-  max-width:350px;
-  margin:0 auto;
-}
+    .alert{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      margin: 0 0 12px 0;
+      background: rgba(255,212,59,.14);
+      border:1px solid rgba(255,212,59,.35);
+      color: var(--secondary);
+      font-weight:900;
+      animation: pop .18s ease;
+    }
+    @keyframes pop{
+      from{ transform: translateY(-8px); opacity:.0; }
+      to{ transform: translateY(0); opacity:1; }
+    }
 
-footer{
-  margin-top:24px;
-  padding-top:12px;
-  border-top:1px solid var(--line);
-  text-align:center;
-  font-size:12px;
-  color:var(--muted);
-  font-weight:700;
-}
-</style>
+    /* Result */
+    .resultBox{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:18px;
+      align-items:start;
+      margin-top: 10px;
+    }
+    @media (max-width:860px){
+      .resultBox{ grid-template-columns: 1fr; }
+    }
+    .panel{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius:16px;
+      padding:14px;
+    }
+    body.light .panel{ background: rgba(20,22,43,.03); }
+
+    .panel h2{
+      margin:0 0 6px 0;
+      font-size:16px;
+      font-weight:900;
+    }
+    .panel p{
+      margin:0;
+      color:var(--muted);
+      font-weight:700;
+      font-size:13px;
+      line-height:1.45;
+    }
+    .big{
+      font-size:28px;
+      font-weight:900;
+      color: var(--secondary);
+      margin: 10px 0 2px;
+    }
+
+    .rankTitle{
+      margin: 16px 0 10px;
+      font-weight:900;
+      color: var(--text);
+      font-size:14px;
+    }
+    .rankList{
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .rankList li{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius:14px;
+      padding:10px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-weight:800;
+      font-size:12px;
+    }
+    body.light .rankList li{ background: rgba(20,22,43,.03); }
+    .rankList strong{ color: var(--secondary); }
+
+    .footer{
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+      padding-top: 12px;
+      border-top:1px solid var(--line);
+      margin-top: 18px;
+    }
+
+    @media (max-width:540px){
+      .qtext{ font-size:18px; }
+      .card-inner{ padding:18px; }
+      .topbar{ padding:16px 16px; }
+      .progress-wrap{ padding:12px 16px 16px 16px; }
+    }
+  </style>
 </head>
 
 <body>
-<div class="container">
-  <div class="header">
-    <h1>Quiz • Matemática (Produto Notável)</h1>
-    <span class="counter" id="counter">0 / 10</span>
+  <div class="themeBtn" id="themeBtn" title="Alternar tema" onclick="toggleTheme()">🌙</div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo"></div>
+          <div class="title">
+            <h1>Quiz • Matemática (Produto Notável)</h1>
+            <div class="subtitle">Produtos Notáveis — forma desenvolvida e diferença de quadrados</div>
+          </div>
+        </div>
+        <div class="meta">
+          <span><strong id="totalQ"></strong> questões</span>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-row">
+          <span id="whoText"></span>
+          <span id="counterText">0 / 10</span>
+        </div>
+        <div class="progressbar"><div id="progressBar"></div></div>
+      </div>
+
+      <div class="card-inner" id="content"></div>
+    </div>
   </div>
-  <div class="progress"><div id="bar"></div></div>
 
-  <div class="content" id="content"></div>
-</div>
+  <script>
+    const questions = [
+      { tag:"Geometria", q:"Um terreno quadrado tem lado (x + 5) metros. Qual é a expressão da área?", o:["x² + 25","x² + 10x + 25","x² + 5x + 25","2x² + 25"], a:1 },
+      { tag:"Construção", q:"Um piso retangular tem lados (x + 3) e (x − 3). Qual é a área?", o:["x² − 9","x² + 9","x² − 6x + 9","x² + 6x − 9"], a:0 },
+      { tag:"Economia", q:"O lucro mensal de uma empresa é dado por (x + 4)². Qual é a forma desenvolvida?", o:["x² + 16","x² + 4x + 16","x² + 8x + 16","x² + 8x"], a:2 },
+      { tag:"Movimento", q:"A distância percorrida por um objeto é representada por (x − 7)². Qual é a forma desenvolvida?", o:["x² − 14x + 49","x² − 7x + 49","x² − 49","x² + 14x + 49"], a:0 },
+      { tag:"Geometria", q:"A área de um quadrado é dada por (2x + 3)². Qual é a expressão desenvolvida?", o:["4x² + 9","4x² + 12x + 9","2x² + 12x + 9","4x² + 6x + 9"], a:1 },
+      { tag:"Planejamento", q:"O valor arrecadado em um evento é dado por (x + 10)(x − 10). Qual é o resultado?", o:["x² − 10","x² + 100","x² − 100","2x² − 100"], a:2 },
+      { tag:"Física", q:"A expressão (3x + 2)² representa uma grandeza física. Qual é sua forma desenvolvida?", o:["9x² + 4","9x² + 6x + 4","9x² + 12x + 4","6x² + 12x + 4"], a:2 },
+      { tag:"Arquitetura", q:"Uma planta baixa utiliza (x − 5)(x + 5). Qual é o resultado?", o:["x² − 10x + 25","x² − 25","x² + 25","2x² − 25"], a:1 },
+      { tag:"Tecnologia", q:"A área de uma tela é representada por (x + 1)². Qual é a forma desenvolvida?", o:["x² + 1","x² + 2x + 1","x² + x + 1","2x² + 1"], a:1 },
+      { tag:"Esportes", q:"O espaço percorrido por um atleta é representado por (x − 2)². Qual é a expressão desenvolvida correta?", o:["x² − 2x + 4","x² − 4x + 4","x² − 4","x² + 4x + 4"], a:1 }
+    ];
 
-<script>
-const questions = [
-  {q:"Um terreno quadrado tem lado (x + 5). Qual é a área?", o:["x² + 25","x² + 10x + 25","x² + 5x + 25","2x² + 25"], a:1},
-  {q:"Um piso tem lados (x + 3) e (x − 3). Qual é a área?", o:["x² − 9","x² + 9","x² − 6x + 9","x² + 6x − 9"], a:0},
-  {q:"Desenvolva a expressão (x + 4)².", o:["x² + 16","x² + 4x + 16","x² + 8x + 16","x² + 8x"], a:2},
-  {q:"Desenvolva (x − 7)².", o:["x² − 14x + 49","x² − 7x + 49","x² − 49","x² + 14x + 49"], a:0},
-  {q:"Desenvolva (2x + 3)².", o:["4x² + 9","4x² + 12x + 9","2x² + 12x + 9","4x² + 6x + 9"], a:1},
-  {q:"Calcule (x + 10)(x − 10).", o:["x² − 10","x² + 100","x² − 100","2x² − 100"], a:2},
-  {q:"Desenvolva (3x + 2)².", o:["9x² + 4","9x² + 6x + 4","9x² + 12x + 4","6x² + 12x + 4"], a:2},
-  {q:"Calcule (x − 5)(x + 5).", o:["x² − 10x + 25","x² − 25","x² + 25","2x² − 25"], a:1},
-  {q:"Desenvolva (x + 1)².", o:["x² + 1","x² + 2x + 1","x² + x + 1","2x² + 1"], a:1},
-  {q:"Desenvolva (x − 2)².", o:["x² − 2x + 4","x² − 4x + 4","x² − 4","x² + 4x + 4"], a:1}
-];
+    // DOM
+    const content = document.getElementById("content");
+    const progressBar = document.getElementById("progressBar");
+    const counterText = document.getElementById("counterText");
+    const whoText = document.getElementById("whoText");
+    document.getElementById("totalQ").textContent = questions.length;
 
-let i=0, answers=[];
+    const letters = ["A","B","C","D"];
+    const FOOTER_TEXT = "© 2026 • Quiz criado pelo professor Gilson — Produto Notável.";
 
-function render(alert=""){
-  document.getElementById("counter").innerText=`${i} / ${questions.length}`;
-  document.getElementById("bar").style.width=`${(i/questions.length)*100}%`;
+    let step = "intro";
+    let current = 0;
+    let answers = Array(questions.length).fill(null);
+    let profile = { aluno:"", professor:"", disciplina:"" };
+    let chartInstance = null;
 
-  let q=questions[i];
-  document.getElementById("content").innerHTML=`
-    ${alert?`<div class="alert">${alert}</div>`:""}
-    <div class="question">${i+1}. ${q.q}</div>
-    <div class="options">
-      ${q.o.map((t,idx)=>`
-        <div class="option ${answers[i]==idx?"selected":""}" onclick="select(${idx})">
-          <div class="letter">${String.fromCharCode(65+idx)}</div>${t}
-        </div>`).join("")}
-    </div>
-    <div class="actions">
-      <button class="btn-back" onclick="back()" ${i==0?"disabled":""}>Voltar</button>
-      <button class="btn-confirm" onclick="next()">Confirmar resposta</button>
-    </div>
-    <footer>© 2026 • Quiz criado pelo professor Gilson — Produto Notável.</footer>
-  `;
-}
+    // Theme
+    function setTheme(isLight){
+      document.body.classList.toggle("light", isLight);
+      document.getElementById("themeBtn").textContent = isLight ? "☀️" : "🌙";
+      localStorage.setItem("quizTheme", isLight ? "light" : "dark");
+      // se tiver gráfico renderizado, re-render pra cores do texto da legenda
+      if(step === "result") setTimeout(()=>renderChart(getScore(), questions.length - getScore()), 0);
+    }
+    function toggleTheme(){ setTheme(!document.body.classList.contains("light")); }
+    const savedTheme = localStorage.getItem("quizTheme");
+    if(savedTheme === "light") setTheme(true);
 
-function select(x){answers[i]=x;render();}
-function back(){if(i>0){i--;render();}}
-function next(){
-  if(answers[i]==null){render("Responda a questão antes de avançar.");return;}
-  i++;
-  if(i>=questions.length) result();
-  else render();
-}
+    function escapeHtml(str){
+      return String(str || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
 
-function result(){
-  let score=answers.filter((v,idx)=>v===questions[idx].a).length;
-  document.getElementById("content").innerHTML=`
-    <div class="result">
-      <h2>Resultado final</h2>
-      <h1>${score} / ${questions.length}</h1>
-      <div id="chart"></div>
-      <footer>© 2026 • Quiz criado pelo professor Gilson — Produto Notável.</footer>
-    </div>`;
-  new ApexCharts(document.querySelector("#chart"),{
-    chart:{type:"pie"},
-    series:[score,questions.length-score],
-    labels:["Acertos","Erros"],
-    colors:["#845ef7","#ffd43b"]
-  }).render();
-}
+    function setHeader(){
+      const done = (step === "intro") ? 0 : (step === "quiz" ? current : questions.length);
+      counterText.textContent = `${done} / ${questions.length}`;
+      const pct = Math.round((done / questions.length) * 100);
+      progressBar.style.width = `${pct}%`;
 
-render();
-</script>
+      if(profile.aluno || profile.professor || profile.disciplina){
+        whoText.textContent = `Aluno: ${profile.aluno || "—"} • Prof.: ${profile.professor || "—"} • Disc.: ${profile.disciplina || "—"}`;
+      } else {
+        whoText.textContent = "";
+      }
+    }
+
+    // Intro
+    function renderIntro(alertMsg=""){
+      step = "intro";
+      setHeader();
+
+      content.innerHTML = `
+        ${alertMsg ? `<div class="alert">⚠️ ${alertMsg}</div>` : ""}
+
+        <div class="section-title">Antes de começar...</div>
+        <p class="section-text">
+          Preencha os dados abaixo e clique em <b>Iniciar</b> para começar o quiz.
+        </p>
+
+        <div class="grid">
+          <div class="field">
+            <label>Nome do aluno</label>
+            <input id="aluno" placeholder="Ex.: Ana Souza" value="${escapeHtml(profile.aluno)}" />
+          </div>
+          <div class="field">
+            <label>Nome do professor</label>
+            <input id="professor" placeholder="Ex.: Prof. Gilson" value="${escapeHtml(profile.professor)}" />
+          </div>
+          <div class="field">
+            <label>Disciplina</label>
+            <input id="disciplina" placeholder="Ex.: Matemática" value="${escapeHtml(profile.disciplina)}" />
+          </div>
+        </div>
+
+        <div class="chips">
+          <span class="chip"><span class="dot"></span> Produtos Notáveis</span>
+          <span class="chip"><span class="dot"></span> (a±b)²</span>
+          <span class="chip"><span class="dot"></span> (a+b)(a−b)</span>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-confirm" onclick="startQuiz()">Iniciar</button>
+        </div>
+
+        <div class="footer">${FOOTER_TEXT}</div>
+      `;
+    }
+
+    function startQuiz(){
+      const aluno = (document.getElementById("aluno")?.value || "").trim();
+      const professor = (document.getElementById("professor")?.value || "").trim();
+      const disciplina = (document.getElementById("disciplina")?.value || "").trim();
+
+      profile = { aluno, professor, disciplina };
+
+      if(!aluno || !professor || !disciplina){
+        renderIntro("Preencha todos os campos para iniciar.");
+        return;
+      }
+
+      current = 0;
+      answers = Array(questions.length).fill(null);
+      renderQuestion();
+    }
+
+    // Quiz
+    function renderQuestion(alertMsg=""){
+      step = "quiz";
+      setHeader();
+
+      const q = questions[current];
+      const chosen = answers[current];
+
+      content.innerHTML = `
+        ${alertMsg ? `<div class="alert">⚠️ ${alertMsg}</div>` : ""}
+
+        <div class="qhead">
+          <span>Questão ${current + 1} • ${escapeHtml(q.tag || "Produto Notável")}</span>
+          <span>${current + 1}/${questions.length}</span>
+        </div>
+
+        <div class="qtext">${escapeHtml(q.q)}</div>
+
+        <div class="choices">
+          ${q.o.map((txt, i)=>`
+            <button class="choice ${chosen===i ? "selected" : ""}" onclick="pick(${i})">
+              <span class="letter">${letters[i]}</span>
+              <span>${escapeHtml(txt)}</span>
+            </button>
+          `).join("")}
+        </div>
+
+        <div class="hint">Selecione uma alternativa</div>
+
+        <div class="actions" style="justify-content:flex-end;">
+          <button class="btn btn-ghost" onclick="prev()" ${current===0 ? "disabled" : ""}>Voltar</button>
+          <button class="btn btn-confirm" onclick="confirm()">Confirmar resposta</button>
+        </div>
+
+        <div class="footer">${FOOTER_TEXT}</div>
+      `;
+    }
+
+    function pick(i){
+      answers[current] = i;
+      renderQuestion();
+    }
+
+    function confirm(){
+      if(answers[current] === null){
+        renderQuestion("Responda a questão antes de avançar.");
+        return;
+      }
+      current++;
+      if(current >= questions.length){
+        renderResult();
+      }else{
+        renderQuestion();
+      }
+    }
+
+    function prev(){
+      if(current > 0){
+        current--;
+        renderQuestion();
+      }
+    }
+
+    // Result + chart + ranking
+    const RANK_KEY = "quiz_produtonotavel_rank_v1";
+
+    function getScore(){
+      return answers.filter((a, idx)=>a === questions[idx].a).length;
+    }
+
+    function saveRanking(score){
+      const now = new Date();
+      const entry = {
+        aluno: profile.aluno,
+        score,
+        total: questions.length,
+        date: now.toLocaleDateString("pt-BR") + " " + now.toLocaleTimeString("pt-BR")
+      };
+      let list = JSON.parse(localStorage.getItem(RANK_KEY) || "[]");
+      list.push(entry);
+      list.sort((a,b)=> b.score - a.score);
+      list = list.slice(0, 10);
+      localStorage.setItem(RANK_KEY, JSON.stringify(list));
+    }
+
+    function renderRanking(){
+      const list = JSON.parse(localStorage.getItem(RANK_KEY) || "[]");
+      const ul = document.getElementById("rankList");
+      if(!ul) return;
+      ul.innerHTML = list.map((r, i)=>`
+        <li>
+          <span><strong>${i+1}º</strong> ${escapeHtml(r.aluno)}</span>
+          <span>${r.score}/${r.total}</span>
+        </li>
+      `).join("");
+    }
+
+    function renderChart(right, wrong){
+      const el = document.getElementById("chart");
+      if(!el) return;
+
+      if(chartInstance){
+        chartInstance.destroy();
+        chartInstance = null;
+      }
+
+      const isLight = document.body.classList.contains("light");
+
+      chartInstance = new ApexCharts(el, {
+        chart: { type: "pie", height: 320, fontFamily: "Montserrat, Arial, sans-serif" },
+        series: [right, wrong],
+        labels: ["Acertos", "Erros"],
+        colors: ["#845ef7", "#ffd43b"],
+        legend: { position: "bottom", labels: { colors: isLight ? "#14162b" : "#eaf0ff" } },
+        dataLabels: {
+          enabled: true,
+          style: { fontSize: "14px", fontWeight: 800 },
+          formatter: (val, opts) => `${opts.w.globals.labels[opts.seriesIndex]}: ${val.toFixed(1)}%`
+        },
+        stroke: { width: 2, colors: [isLight ? "#ffffff" : "#0b1536"] },
+        tooltip: { y: { formatter: (v)=> `${v} questão(ões)` } }
+      });
+
+      chartInstance.render();
+    }
+
+    function renderResult(){
+      step = "result";
+      const score = getScore();
+      const total = questions.length;
+      const wrong = total - score;
+
+      saveRanking(score);
+      setHeader();
+      progressBar.style.width = "100%";
+      counterText.textContent = `${total} / ${total}`;
+
+      content.innerHTML = `
+        <div class="resultBox">
+          <div class="panel">
+            <h2>Resultado</h2>
+            <div class="big">${score} / ${total}</div>
+            <p>
+              Aluno: <b>${escapeHtml(profile.aluno)}</b><br/>
+              Professor: <b>${escapeHtml(profile.professor)}</b><br/>
+              Disciplina: <b>${escapeHtml(profile.disciplina)}</b>
+            </p>
+            <p style="margin-top:10px;">
+              ${score >= total*0.7 ? "Parabéns, ótimo desempenho! 🎉" : "Continue praticando! 💪"}
+            </p>
+
+            <div class="rankTitle">Ranking (no dispositivo)</div>
+            <ul class="rankList" id="rankList"></ul>
+
+            <div class="actions" style="justify-content:flex-end;">
+              <button class="btn btn-ghost" onclick="backToStart()">Voltar ao início</button>
+              <button class="btn btn-confirm" onclick="retry()">Refazer</button>
+            </div>
+          </div>
+
+          <div class="panel" id="chart"></div>
+        </div>
+
+        <div class="footer">${FOOTER_TEXT}</div>
+      `;
+
+      renderRanking();
+      renderChart(score, wrong);
+    }
+
+    function retry(){
+      current = 0;
+      answers = Array(questions.length).fill(null);
+      renderQuestion();
+    }
+
+    function backToStart(){
+      current = 0;
+      answers = Array(questions.length).fill(null);
+      renderIntro();
+    }
+
+    // Boot
+    renderIntro();
+  </script>
 </body>
 </html>
