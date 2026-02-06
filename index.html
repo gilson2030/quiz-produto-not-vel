@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz • Matemática (Produto Notável)</title>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+:root{
+  --primary:#845ef7;
+  --secondary:#ffd43b;
+  --bg:#0b1230;
+  --card:#0e1a3f;
+  --text:#eaf0ff;
+  --muted:rgba(234,240,255,.75);
+  --line:rgba(255,255,255,.12);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Montserrat, Arial, sans-serif;
+  background:linear-gradient(180deg,#070b1a,#0b1230);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.container{
+  width:100%;
+  max-width:900px;
+  background:var(--card);
+  border-radius:22px;
+  border:1px solid var(--line);
+  overflow:hidden;
+}
+
+.header{
+  padding:18px 22px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header h1{
+  margin:0;
+  font-size:16px;
+  font-weight:800;
+}
+
+.counter{
+  font-weight:800;
+  color:var(--secondary);
+}
+
+.progress{
+  height:8px;
+  background:rgba(255,255,255,.1);
+}
+.progress div{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  transition:.3s;
+}
+
+.content{
+  padding:24px;
+}
+
+.question{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:16px;
+}
+
+.options{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.option{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  cursor:pointer;
+  transition:.2s;
+}
+.option:hover{
+  background:rgba(132,94,247,.12);
+}
+.option.selected{
+  background:rgba(255,212,59,.15);
+  border-color:var(--secondary);
+}
+
+.letter{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  background:rgba(255,212,59,.2);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:900;
+  color:var(--secondary);
+}
+
+.actions{
+  display:flex;
+  justify-content:space-between;
+  margin-top:20px;
+}
+
+button{
+  border:none;
+  padding:12px 18px;
+  border-radius:14px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.btn-back{
+  background:rgba(255,255,255,.1);
+  color:var(--text);
+}
+
+.btn-confirm{
+  background:linear-gradient(180deg,var(--primary),#6f4df0);
+  color:#fff;
+}
+
+.alert{
+  background:rgba(255,212,59,.18);
+  color:var(--secondary);
+  padding:10px;
+  border-radius:14px;
+  font-weight:800;
+  margin-bottom:12px;
+  text-align:center;
+}
+
+.result{
+  text-align:center;
+}
+
+.result h2{
+  margin-top:0;
+}
+
+#chart{
+  max-width:350px;
+  margin:0 auto;
+}
+
+footer{
+  margin-top:24px;
+  padding-top:12px;
+  border-top:1px solid var(--line);
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+  font-weight:700;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Quiz • Matemática (Produto Notável)</h1>
+    <span class="counter" id="counter">0 / 10</span>
+  </div>
+  <div class="progress"><div id="bar"></div></div>
+
+  <div class="content" id="content"></div>
+</div>
+
+<script>
+const questions = [
+  {q:"Um terreno quadrado tem lado (x + 5). Qual é a área?", o:["x² + 25","x² + 10x + 25","x² + 5x + 25","2x² + 25"], a:1},
+  {q:"Um piso tem lados (x + 3) e (x − 3). Qual é a área?", o:["x² − 9","x² + 9","x² − 6x + 9","x² + 6x − 9"], a:0},
+  {q:"Desenvolva a expressão (x + 4)².", o:["x² + 16","x² + 4x + 16","x² + 8x + 16","x² + 8x"], a:2},
+  {q:"Desenvolva (x − 7)².", o:["x² − 14x + 49","x² − 7x + 49","x² − 49","x² + 14x + 49"], a:0},
+  {q:"Desenvolva (2x + 3)².", o:["4x² + 9","4x² + 12x + 9","2x² + 12x + 9","4x² + 6x + 9"], a:1},
+  {q:"Calcule (x + 10)(x − 10).", o:["x² − 10","x² + 100","x² − 100","2x² − 100"], a:2},
+  {q:"Desenvolva (3x + 2)².", o:["9x² + 4","9x² + 6x + 4","9x² + 12x + 4","6x² + 12x + 4"], a:2},
+  {q:"Calcule (x − 5)(x + 5).", o:["x² − 10x + 25","x² − 25","x² + 25","2x² − 25"], a:1},
+  {q:"Desenvolva (x + 1)².", o:["x² + 1","x² + 2x + 1","x² + x + 1","2x² + 1"], a:1},
+  {q:"Desenvolva (x − 2)².", o:["x² − 2x + 4","x² − 4x + 4","x² − 4","x² + 4x + 4"], a:1}
+];
+
+let i=0, answers=[];
+
+function render(alert=""){
+  document.getElementById("counter").innerText=`${i} / ${questions.length}`;
+  document.getElementById("bar").style.width=`${(i/questions.length)*100}%`;
+
+  let q=questions[i];
+  document.getElementById("content").innerHTML=`
+    ${alert?`<div class="alert">${alert}</div>`:""}
+    <div class="question">${i+1}. ${q.q}</div>
+    <div class="options">
+      ${q.o.map((t,idx)=>`
+        <div class="option ${answers[i]==idx?"selected":""}" onclick="select(${idx})">
+          <div class="letter">${String.fromCharCode(65+idx)}</div>${t}
+        </div>`).join("")}
+    </div>
+    <div class="actions">
+      <button class="btn-back" onclick="back()" ${i==0?"disabled":""}>Voltar</button>
+      <button class="btn-confirm" onclick="next()">Confirmar resposta</button>
+    </div>
+    <footer>© 2026 • Quiz criado pelo professor Gilson — Produto Notável.</footer>
+  `;
+}
+
+function select(x){answers[i]=x;render();}
+function back(){if(i>0){i--;render();}}
+function next(){
+  if(answers[i]==null){render("Responda a questão antes de avançar.");return;}
+  i++;
+  if(i>=questions.length) result();
+  else render();
+}
+
+function result(){
+  let score=answers.filter((v,idx)=>v===questions[idx].a).length;
+  document.getElementById("content").innerHTML=`
+    <div class="result">
+      <h2>Resultado final</h2>
+      <h1>${score} / ${questions.length}</h1>
+      <div id="chart"></div>
+      <footer>© 2026 • Quiz criado pelo professor Gilson — Produto Notável.</footer>
+    </div>`;
+  new ApexCharts(document.querySelector("#chart"),{
+    chart:{type:"pie"},
+    series:[score,questions.length-score],
+    labels:["Acertos","Erros"],
+    colors:["#845ef7","#ffd43b"]
+  }).render();
+}
+
+render();
+</script>
+</body>
+</html>
